@@ -67,7 +67,7 @@ if not %errorLevel% == 0 goto exit
 
 echo generating jarfile(.jar) support...
 assoc .jar=jarfile > nul
-ftype jarfile=%bin%\javaw.exe -jar %1 %* > nul
+ftype jarfile=%bin%\javaw.exe -jar %%1 %%* > nul
 
 echo:
 echo done
