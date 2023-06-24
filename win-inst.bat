@@ -10,14 +10,16 @@ exit
 :main
 net session >nul 2>&1
 if not %errorLevel% == 0 (
-	echo requires elevated privileges
+	echo Please run as Administrator
 	pause
 	exit
 )
 
+cd %temp%
+
 setlocal EnableDelayedExpansion
 if "%~1" == "" (
-	echo Folder: 
+	echo Zip Folder:
 	set /p folder=
 ) else (
 	set folder=%~1
@@ -47,7 +49,7 @@ powershell -c ls java-inst-tmp0 -Name > java-inst-tmp1
 if not %errorLevel% == 0 goto exit
 
 set /p outfolder= < java-inst-tmp1
-echo outfolder: %outfolder%
+rem echo outfolder: %outfolder%
 del java-inst-tmp1
 
 set home=C:\Program Files\Java\%outfolder%
@@ -61,11 +63,13 @@ rd /s /q java-inst-tmp0
 if not %errorLevel% == 0 goto exit
 
 echo updating environment...
-powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); $bin = '%bin%'; [Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine')"
+powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%'"
 
 if not %errorLevel% == 0 goto exit
 
 echo generating jarfile(.jar) support...
+echo this will make changes in the registry! (enter to continue; Ctrl-C to quit)
+pause > nul
 assoc .jar=jarfile > nul
 ftype jarfile=%bin%\javaw.exe -jar %%1 %%* > nul
 
