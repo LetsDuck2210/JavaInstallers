@@ -15,7 +15,8 @@ if not %errorLevel% == 0 (
 	exit
 )
 
-cd %temp%
+mkdir "C:\Program Files\Java" >nul 2>&1
+cd "C:\Program Files\Java"
 
 setlocal EnableDelayedExpansion
 if "%~1" == "" (
@@ -63,7 +64,7 @@ rd /s /q java-inst-tmp0
 if not %errorLevel% == 0 goto exit
 
 echo updating environment...
-powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%'"
+powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%';[Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine)"
 
 if not %errorLevel% == 0 goto exit
 
