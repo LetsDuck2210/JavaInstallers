@@ -40,13 +40,15 @@ if defined p7z ( rem 7-Zip is faster than Expand-Archive
 	"%p7z%\7z.exe" x -bso0 -o"java-inst-tmp0" %folder%
 ) else (
 	echo extracting with powershell...
-	powershell -c Expand-Archive %folder%
+	powershell -c Expand-Archive %folder% -DestinationPath java-inst-tmp0
 )
 
+echo [extract] ok
 if not %errorLevel% == 0 goto exit
 
 powershell -c ls java-inst-tmp0 -Name > java-inst-tmp1
 
+echo [name] ok
 if not %errorLevel% == 0 goto exit
 
 set /p outfolder= < java-inst-tmp1
@@ -61,11 +63,13 @@ move java-inst-tmp0\%outfolder% "%home%" > nul
 setx /m JAVA_HOME "%home%" > nul
 rd /s /q java-inst-tmp0
 
+echo [home] ok
 if not %errorLevel% == 0 goto exit
 
-echo updating environment...
-powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%';[Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine)"
+echo updating environment... (%bin%)
+powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%';[Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine')"
 
+echo [path] ok
 if not %errorLevel% == 0 goto exit
 
 echo generating jarfile(.jar) support...
