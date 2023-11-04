@@ -26,4 +26,6 @@ Installers that don't hide shit all over your system
 
 - HKEY\_CLASSES\_ROOT\\.jar
 
+- HKEY\_CLASSES\_ROOT\\.jar\\OpenWithProgids
+
 - HKEY\_CLASSES\_ROOT\\jarfile

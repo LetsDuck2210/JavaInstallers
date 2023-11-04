@@ -78,6 +78,7 @@ echo this will make changes in the registry! (enter to continue; Ctrl-C to quit)
 pause > nul
 assoc .jar=jarfile > nul
 ftype jarfile=%bin%\javaw.exe -jar %%1 %%* > nul
+reg add "HKCR\.jar\OpenWithProgids" /v jarfile /f
 
 echo:
 echo done
