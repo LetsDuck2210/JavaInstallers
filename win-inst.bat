@@ -67,7 +67,8 @@ echo [home] ok
 if not %errorLevel% == 0 goto exit
 
 echo updating environment... (%bin%)
-powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine'); ($oldpath.split(';') | findstr /I 'jdk jre') + ';' | foreach-object { echo ('removing ' + $_ + ' from PATH'); $oldpath = $oldpath.Replace($_, '') }; $bin = '%bin%';[Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine')"
+
+powershell -c "$oldpath = [Environment]::GetEnvironmentVariable('Path', 'Machine');($oldpath.split(';') | findstr /I 'jdk jre') + ';'| foreach-object {if ( $_ -ne ';') {echo ('removing ' + $_ + ' from PATH');$oldpath = $oldpath.Replace($_, '')}};$bin = '%bin%';[Environment]::SetEnvironmentVariable('Path', $bin + ';' + $oldpath, 'Machine');"
 
 echo [path] ok
 if not %errorLevel% == 0 goto exit
@@ -81,3 +82,4 @@ ftype jarfile=%bin%\javaw.exe -jar %%1 %%* > nul
 echo:
 echo done
 pause > nul
+
